@@ -1,0 +1,23 @@
+{
+  "name": "movierankings",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "npm start ./client",
+    "server": "npm start ./server",
+    "start": "npm run server && npm run client",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "movie",
+    "rankings",
+    "visualization"
+  ],
+  "author": "andyacosta",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^4.1.0",
+    "express": "^4.16.4"
+  }
+}
