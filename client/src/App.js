@@ -1,32 +1,71 @@
 import React, { Component } from 'react';
-import { Button } from "@blueprintjs/core";
 import './App.css';
+import GridLayout from 'react-grid-layout';
+import Navigation from './components/Navigation';
+import {Breadcrumbs, IBreadcrumbProps} from '@blueprintjs/core';
+import { Link, Route, Switch, withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Home from './components/Home';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import * as movieActions from './actions/movieActions';
+
+import Leaderboards from './components/Leaderboards';
+import Movies from './components/Movies';
+import Movie from './components/Movie';
+
+const BREADCRUMBS: IBreadcrumbProps[] = [
+  { href: "/movies", text: "Movies" },
+  { href: "/movie/id", text: "Selected Movie"}
+];
 
 class App extends Component {
-  constructor(){
-    super();
-    this.state = {
-      movies: []
-    };
+
+  componentWillMount() {
+      this.props.movieActions.fetchMovies();
   }
 
-  componentDidMount() {
-    fetch('/api/movies')
-      .then(response => response.json() )
-      .then(data => this.setState ({ movies: data}));
-  }
 
   render() {
+    var layout = [
+      {i: 'breadcrumbs', x: 0, y: 0, w: 12, h: 1, static: true}
+    ];
+
     return (
+      
       <div>
-          <ul>
-            {this.state.movies.map( movie =>
-              <li>{movie.title}</li>
-            )}
-          </ul>
+        <Navigation />
+        <GridLayout className="layout" layout={layout} cols={12} rowHeight={30} width={1200}>
+          <div key="breadcrumbs">
+            <Breadcrumbs items={BREADCRUMBS}/>
+          </div>
+        </GridLayout>
+        <div>
+        </div>
+            <Route exact={true} path="/" component={Home}/>
+            <Route path="/leaderboards" component={Leaderboards}/>
+            <Route exact={true} path="/movies" component={Movies}/>
+            <Route path="/movies/:id" component={Movie}/>
+             
       </div>
     );
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    movies: state.movies
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    movieActions: bindActionCreators(movieActions, dispatch)
+  };
+}
+
+export default withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App));
